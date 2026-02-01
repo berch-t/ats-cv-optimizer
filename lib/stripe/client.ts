@@ -1,9 +1,9 @@
 // Stripe Client Operations
-import { stripe, STRIPE_CONFIG, getStripeUrls, PLANS } from './config'
+import { getStripe, STRIPE_CONFIG, getStripeUrls, PLANS } from './config'
 import type Stripe from 'stripe'
 
-// Re-export stripe instance for direct usage
-export { stripe }
+// Re-export getStripe for direct usage
+export { getStripe }
 
 // ============================================
 // Customer Management
@@ -14,7 +14,7 @@ export async function createStripeCustomer(
   name?: string,
   metadata?: Record<string, string>
 ): Promise<Stripe.Customer> {
-  const customer = await stripe.customers.create({
+  const customer = await getStripe().customers.create({
     email,
     name,
     metadata: {
@@ -30,7 +30,7 @@ export async function getStripeCustomer(
   customerId: string
 ): Promise<Stripe.Customer | null> {
   try {
-    const customer = await stripe.customers.retrieve(customerId)
+    const customer = await getStripe().customers.retrieve(customerId)
     if (customer.deleted) {
       return null
     }
@@ -46,7 +46,7 @@ export async function updateStripeCustomer(
   data: Stripe.CustomerUpdateParams
 ): Promise<Stripe.Customer | null> {
   try {
-    const customer = await stripe.customers.update(customerId, data)
+    const customer = await getStripe().customers.update(customerId, data)
     return customer
   } catch (error) {
     console.error('Error updating Stripe customer:', error)
@@ -66,7 +66,7 @@ export async function createCheckoutSession(
 ): Promise<Stripe.Checkout.Session> {
   const urls = getStripeUrls(baseUrl)
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     customer: customerId,
     mode: 'subscription',
     payment_method_types: ['card'],
@@ -98,7 +98,7 @@ export async function getCheckoutSession(
   sessionId: string
 ): Promise<Stripe.Checkout.Session | null> {
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+    const session = await getStripe().checkout.sessions.retrieve(sessionId, {
       expand: ['subscription', 'customer'],
     })
     return session
@@ -116,7 +116,7 @@ export async function getSubscription(
   subscriptionId: string
 ): Promise<Stripe.Subscription | null> {
   try {
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+    const subscription = await getStripe().subscriptions.retrieve(subscriptionId)
     return subscription
   } catch (error) {
     console.error('Error retrieving subscription:', error)
@@ -128,7 +128,7 @@ export async function getCustomerSubscriptions(
   customerId: string
 ): Promise<Stripe.Subscription[]> {
   try {
-    const subscriptions = await stripe.subscriptions.list({
+    const subscriptions = await getStripe().subscriptions.list({
       customer: customerId,
       status: 'all',
     })
@@ -145,9 +145,9 @@ export async function cancelSubscription(
 ): Promise<Stripe.Subscription | null> {
   try {
     if (immediately) {
-      return await stripe.subscriptions.cancel(subscriptionId)
+      return await getStripe().subscriptions.cancel(subscriptionId)
     } else {
-      return await stripe.subscriptions.update(subscriptionId, {
+      return await getStripe().subscriptions.update(subscriptionId, {
         cancel_at_period_end: true,
       })
     }
@@ -161,7 +161,7 @@ export async function reactivateSubscription(
   subscriptionId: string
 ): Promise<Stripe.Subscription | null> {
   try {
-    return await stripe.subscriptions.update(subscriptionId, {
+    return await getStripe().subscriptions.update(subscriptionId, {
       cancel_at_period_end: false,
     })
   } catch (error) {
@@ -175,8 +175,8 @@ export async function updateSubscription(
   newPriceId: string
 ): Promise<Stripe.Subscription | null> {
   try {
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-    const updatedSubscription = await stripe.subscriptions.update(
+    const subscription = await getStripe().subscriptions.retrieve(subscriptionId)
+    const updatedSubscription = await getStripe().subscriptions.update(
       subscriptionId,
       {
         items: [
@@ -203,7 +203,7 @@ export async function createBillingPortalSession(
   customerId: string,
   returnUrl: string
 ): Promise<Stripe.BillingPortal.Session> {
-  const session = await stripe.billingPortal.sessions.create({
+  const session = await getStripe().billingPortal.sessions.create({
     customer: customerId,
     return_url: returnUrl,
   })
@@ -220,7 +220,7 @@ export async function getCustomerInvoices(
   limit = 10
 ): Promise<Stripe.Invoice[]> {
   try {
-    const invoices = await stripe.invoices.list({
+    const invoices = await getStripe().invoices.list({
       customer: customerId,
       limit,
     })
@@ -235,7 +235,7 @@ export async function getUpcomingInvoice(
   customerId: string
 ): Promise<Stripe.UpcomingInvoice | null> {
   try {
-    const invoice = await stripe.invoices.retrieveUpcoming({
+    const invoice = await getStripe().invoices.retrieveUpcoming({
       customer: customerId,
     })
     return invoice
@@ -255,7 +255,7 @@ export function constructWebhookEvent(
 ): Stripe.Event {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
-  return stripe.webhooks.constructEvent(payload, signature, webhookSecret)
+  return getStripe().webhooks.constructEvent(payload, signature, webhookSecret)
 }
 
 // ============================================
@@ -299,7 +299,7 @@ export function getTrialEndDate(
 
 export async function getPrice(priceId: string): Promise<Stripe.Price | null> {
   try {
-    const price = await stripe.prices.retrieve(priceId, {
+    const price = await getStripe().prices.retrieve(priceId, {
       expand: ['product'],
     })
     return price
@@ -314,7 +314,7 @@ export async function createPremiumPrice(): Promise<Stripe.Price> {
   let product: Stripe.Product
 
   try {
-    const existingProducts = await stripe.products.list({
+    const existingProducts = await getStripe().products.list({
       active: true,
       limit: 1,
     })
@@ -326,7 +326,7 @@ export async function createPremiumPrice(): Promise<Stripe.Price> {
     if (premiumProduct) {
       product = premiumProduct
     } else {
-      product = await stripe.products.create({
+      product = await getStripe().products.create({
         name: 'ATS CV Optimizer Premium',
         description: 'Unlimited CV conversions with advanced ATS optimization',
         metadata: {
@@ -339,7 +339,7 @@ export async function createPremiumPrice(): Promise<Stripe.Price> {
   }
 
   // Create the price
-  const price = await stripe.prices.create({
+  const price = await getStripe().prices.create({
     product: product.id,
     unit_amount: STRIPE_CONFIG.pricing.premiumMonthly,
     currency: STRIPE_CONFIG.pricing.currency,
