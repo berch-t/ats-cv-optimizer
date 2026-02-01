@@ -16,7 +16,7 @@ import {
   type DocumentData,
   type QueryConstraint,
 } from 'firebase/firestore'
-import { db } from './config'
+import { getFirebaseDb } from './config'
 import type {
   CVAnalysisResult,
   ConversionResult,
@@ -40,7 +40,7 @@ const COLLECTIONS = {
 // ============================================
 
 export async function getUserProfile(userId: string) {
-  const docRef = doc(db, COLLECTIONS.USERS, userId)
+  const docRef = doc(getFirebaseDb(), COLLECTIONS.USERS, userId)
   const docSnap = await getDoc(docRef)
 
   if (docSnap.exists()) {
@@ -53,7 +53,7 @@ export async function updateUserProfile(
   userId: string,
   data: Partial<DocumentData>
 ) {
-  const docRef = doc(db, COLLECTIONS.USERS, userId)
+  const docRef = doc(getFirebaseDb(), COLLECTIONS.USERS, userId)
   const docSnap = await getDoc(docRef)
 
   if (docSnap.exists()) {
@@ -71,7 +71,7 @@ export async function updateUserProfile(
 }
 
 export async function deleteUserProfile(userId: string) {
-  const docRef = doc(db, COLLECTIONS.USERS, userId)
+  const docRef = doc(getFirebaseDb(), COLLECTIONS.USERS, userId)
   await deleteDoc(docRef)
 }
 
@@ -80,7 +80,7 @@ export async function deleteUserProfile(userId: string) {
 // ============================================
 
 export async function createUserSubscription(userId: string): Promise<void> {
-  const docRef = doc(db, COLLECTIONS.SUBSCRIPTIONS, userId)
+  const docRef = doc(getFirebaseDb(), COLLECTIONS.SUBSCRIPTIONS, userId)
   const now = new Date()
   const periodEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) // 30 days
 
@@ -108,7 +108,7 @@ export async function createUserSubscription(userId: string): Promise<void> {
 export async function getUserSubscription(
   userId: string
 ): Promise<UserSubscription | null> {
-  const docRef = doc(db, COLLECTIONS.SUBSCRIPTIONS, userId)
+  const docRef = doc(getFirebaseDb(), COLLECTIONS.SUBSCRIPTIONS, userId)
   const docSnap = await getDoc(docRef)
 
   if (!docSnap.exists()) {
@@ -140,7 +140,7 @@ export async function updateUserSubscription(
   userId: string,
   data: Partial<UserSubscription>
 ): Promise<void> {
-  const docRef = doc(db, COLLECTIONS.SUBSCRIPTIONS, userId)
+  const docRef = doc(getFirebaseDb(), COLLECTIONS.SUBSCRIPTIONS, userId)
 
   const updateData: Record<string, unknown> = { ...data }
 
@@ -175,7 +175,7 @@ export async function incrementConversionUsage(userId: string): Promise<void> {
     throw new Error('Conversion limit reached')
   }
 
-  const docRef = doc(db, COLLECTIONS.SUBSCRIPTIONS, userId)
+  const docRef = doc(getFirebaseDb(), COLLECTIONS.SUBSCRIPTIONS, userId)
   await updateDoc(docRef, {
     conversionsUsed: increment(1),
     updatedAt: serverTimestamp(),
@@ -183,7 +183,7 @@ export async function incrementConversionUsage(userId: string): Promise<void> {
 }
 
 export async function resetMonthlyUsage(userId: string): Promise<void> {
-  const docRef = doc(db, COLLECTIONS.SUBSCRIPTIONS, userId)
+  const docRef = doc(getFirebaseDb(), COLLECTIONS.SUBSCRIPTIONS, userId)
   const now = new Date()
 
   await updateDoc(docRef, {
@@ -232,7 +232,7 @@ export async function downgradeToFree(userId: string): Promise<void> {
 export async function saveConversion(
   data: Omit<ConversionResult, 'id'>
 ): Promise<string> {
-  const docRef = doc(collection(db, COLLECTIONS.CONVERSIONS))
+  const docRef = doc(collection(getFirebaseDb(), COLLECTIONS.CONVERSIONS))
 
   await setDoc(docRef, {
     ...data,
@@ -245,7 +245,7 @@ export async function saveConversion(
 export async function getConversion(
   conversionId: string
 ): Promise<ConversionResult | null> {
-  const docRef = doc(db, COLLECTIONS.CONVERSIONS, conversionId)
+  const docRef = doc(getFirebaseDb(), COLLECTIONS.CONVERSIONS, conversionId)
   const docSnap = await getDoc(docRef)
 
   if (!docSnap.exists()) {
@@ -279,7 +279,7 @@ export async function getUserConversions(
     limit(limitCount),
   ]
 
-  const q = query(collection(db, COLLECTIONS.CONVERSIONS), ...constraints)
+  const q = query(collection(getFirebaseDb(), COLLECTIONS.CONVERSIONS), ...constraints)
   const snapshot = await getDocs(q)
 
   return snapshot.docs.map((doc) => {
@@ -304,13 +304,13 @@ export async function getUserConversions(
 }
 
 export async function deleteConversion(conversionId: string): Promise<void> {
-  const docRef = doc(db, COLLECTIONS.CONVERSIONS, conversionId)
+  const docRef = doc(getFirebaseDb(), COLLECTIONS.CONVERSIONS, conversionId)
   await deleteDoc(docRef)
 }
 
 export async function countUserConversions(userId: string): Promise<number> {
   const q = query(
-    collection(db, COLLECTIONS.CONVERSIONS),
+    collection(getFirebaseDb(), COLLECTIONS.CONVERSIONS),
     where('userId', '==', userId)
   )
   const snapshot = await getDocs(q)

@@ -13,7 +13,7 @@ import {
   type User,
   type UserCredential,
 } from 'firebase/auth'
-import { auth } from './config'
+import { getFirebaseAuth } from './config'
 import { createUserSubscription, updateUserProfile } from './firestore'
 import type { User as AppUser } from '@/types/user'
 
@@ -28,7 +28,7 @@ export async function signUpWithEmail(
   password: string,
   displayName?: string
 ): Promise<UserCredential> {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+  const userCredential = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password)
 
   // Update profile with display name
   if (displayName && userCredential.user) {
@@ -61,7 +61,7 @@ export async function signInWithEmail(
   email: string,
   password: string
 ): Promise<UserCredential> {
-  const userCredential = await signInWithEmailAndPassword(auth, email, password)
+  const userCredential = await signInWithEmailAndPassword(getFirebaseAuth(), email, password)
 
   // Update last login time
   await updateUserProfile(userCredential.user.uid, {
@@ -73,7 +73,7 @@ export async function signInWithEmail(
 
 // Sign in with Google
 export async function signInWithGoogle(): Promise<UserCredential> {
-  const userCredential = await signInWithPopup(auth, googleProvider)
+  const userCredential = await signInWithPopup(getFirebaseAuth(), googleProvider)
 
   // Check if new user and create subscription
   const isNewUser =
@@ -99,17 +99,17 @@ export async function signInWithGoogle(): Promise<UserCredential> {
 
 // Sign out
 export async function signOut(): Promise<void> {
-  await firebaseSignOut(auth)
+  await firebaseSignOut(getFirebaseAuth())
 }
 
 // Reset password
 export async function resetPassword(email: string): Promise<void> {
-  await sendPasswordResetEmail(auth, email)
+  await sendPasswordResetEmail(getFirebaseAuth(), email)
 }
 
 // Resend verification email
 export async function resendVerificationEmail(): Promise<void> {
-  const user = auth.currentUser
+  const user = getFirebaseAuth().currentUser
   if (user) {
     await sendEmailVerification(user)
   } else {
@@ -119,7 +119,7 @@ export async function resendVerificationEmail(): Promise<void> {
 
 // Update user display name
 export async function updateDisplayName(displayName: string): Promise<void> {
-  const user = auth.currentUser
+  const user = getFirebaseAuth().currentUser
   if (user) {
     await updateProfile(user, { displayName })
     await updateUserProfile(user.uid, { displayName })
@@ -130,14 +130,14 @@ export async function updateDisplayName(displayName: string): Promise<void> {
 
 // Get current user
 export function getCurrentUser(): User | null {
-  return auth.currentUser
+  return getFirebaseAuth().currentUser
 }
 
 // Subscribe to auth state changes
 export function onAuthStateChange(
   callback: (user: User | null) => void
 ): () => void {
-  return onAuthStateChanged(auth, callback)
+  return onAuthStateChanged(getFirebaseAuth(), callback)
 }
 
 // Convert Firebase User to App User
@@ -153,12 +153,12 @@ export function toAppUser(firebaseUser: User): Partial<AppUser> {
 
 // Get ID token for API calls
 export async function getIdToken(forceRefresh = false): Promise<string | null> {
-  const user = auth.currentUser
+  const user = getFirebaseAuth().currentUser
   if (user) {
     return await user.getIdToken(forceRefresh)
   }
   return null
 }
 
-export { auth }
+export { getFirebaseAuth }
 export type { User, UserCredential }

@@ -37,42 +37,77 @@ function validateConfig() {
   return missingFields.length === 0
 }
 
-// Initialize Firebase (singleton pattern)
-function initializeFirebase(): { app: FirebaseApp; auth: Auth; db: Firestore; storage: FirebaseStorage } {
-  let firebaseApp: FirebaseApp
+// Lazy initialization cache
+let firebaseApp: FirebaseApp | null = null
+let firebaseAuth: Auth | null = null
+let firebaseDb: Firestore | null = null
+let firebaseStorage: FirebaseStorage | null = null
 
-  if (typeof window === 'undefined') {
-    // Server-side: Check if already initialized
+// Lazy getter for Firebase app
+function getFirebaseApp(): FirebaseApp {
+  if (!firebaseApp) {
     if (getApps().length === 0) {
-      firebaseApp = initializeApp(firebaseConfig)
-    } else {
-      firebaseApp = getApp()
-    }
-  } else {
-    // Client-side: Use singleton pattern
-    if (getApps().length === 0) {
-      validateConfig()
+      if (typeof window !== 'undefined') {
+        validateConfig()
+      }
       firebaseApp = initializeApp(firebaseConfig)
     } else {
       firebaseApp = getApp()
     }
   }
-
-  const firebaseAuth = getAuth(firebaseApp)
-  const firebaseDb = getFirestore(firebaseApp)
-  const firebaseStorage = getStorage(firebaseApp)
-
-  return { app: firebaseApp, auth: firebaseAuth, db: firebaseDb, storage: firebaseStorage }
+  return firebaseApp
 }
 
-// Initialize on module load
-const firebase = initializeFirebase()
+// Lazy getters for Firebase services
+export function getFirebaseAuth(): Auth {
+  if (!firebaseAuth) {
+    firebaseAuth = getAuth(getFirebaseApp())
+  }
+  return firebaseAuth
+}
 
-export { firebase, firebaseConfig }
-export const app = firebase.app
-export const auth = firebase.auth
-export const db = firebase.db
-export const storage = firebase.storage
+export function getFirebaseDb(): Firestore {
+  if (!firebaseDb) {
+    firebaseDb = getFirestore(getFirebaseApp())
+  }
+  return firebaseDb
+}
+
+export function getFirebaseStorage(): FirebaseStorage {
+  if (!firebaseStorage) {
+    firebaseStorage = getStorage(getFirebaseApp())
+  }
+  return firebaseStorage
+}
+
+// Export config for reference
+export { firebaseConfig }
+
+// Legacy exports - these use getters for lazy initialization
+// Use getFirebaseAuth(), getFirebaseDb(), getFirebaseStorage() for new code
+export const app = {
+  get instance() {
+    return getFirebaseApp()
+  },
+}
+
+export const auth = {
+  get instance() {
+    return getFirebaseAuth()
+  },
+}
+
+export const db = {
+  get instance() {
+    return getFirebaseDb()
+  },
+}
+
+export const storage = {
+  get instance() {
+    return getFirebaseStorage()
+  },
+}
 
 // Type exports for convenience
 export type { FirebaseApp, Auth, Firestore, FirebaseStorage }

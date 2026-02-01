@@ -7,7 +7,7 @@ import {
   listAll,
   type UploadTaskSnapshot,
 } from 'firebase/storage'
-import { storage } from './config'
+import { getFirebaseStorage } from './config'
 
 // Storage paths
 const STORAGE_PATHS = {
@@ -29,7 +29,7 @@ export async function uploadFile(
   path: string,
   metadata?: { contentType?: string; customMetadata?: Record<string, string> }
 ): Promise<string> {
-  const storageRef = ref(storage, path)
+  const storageRef = ref(getFirebaseStorage(), path)
 
   const uploadMetadata = {
     contentType: metadata?.contentType || 'application/pdf',
@@ -63,7 +63,7 @@ export async function uploadFileWithProgress(
   path: string,
   onProgress?: (progress: number) => void
 ): Promise<string> {
-  const storageRef = ref(storage, path)
+  const storageRef = ref(getFirebaseStorage(), path)
 
   const uploadTask = uploadBytesResumable(storageRef, file, {
     contentType: file.type,
@@ -138,7 +138,7 @@ export async function uploadAvatar(
  * Get download URL for a file
  */
 export async function getFileDownloadURL(path: string): Promise<string> {
-  const storageRef = ref(storage, path)
+  const storageRef = ref(getFirebaseStorage(), path)
   return getDownloadURL(storageRef)
 }
 
@@ -161,7 +161,7 @@ export async function downloadFile(url: string): Promise<Blob> {
  * Delete a file from storage
  */
 export async function deleteFile(path: string): Promise<void> {
-  const storageRef = ref(storage, path)
+  const storageRef = ref(getFirebaseStorage(), path)
   await deleteObject(storageRef)
 }
 
@@ -169,7 +169,7 @@ export async function deleteFile(path: string): Promise<void> {
  * Delete all files in a directory
  */
 export async function deleteDirectory(path: string): Promise<void> {
-  const storageRef = ref(storage, path)
+  const storageRef = ref(getFirebaseStorage(), path)
   const listResult = await listAll(storageRef)
 
   // Delete all files
@@ -258,7 +258,7 @@ export function getFileMetadataFromURL(url: string): {
  */
 export async function fileExists(path: string): Promise<boolean> {
   try {
-    const storageRef = ref(storage, path)
+    const storageRef = ref(getFirebaseStorage(), path)
     await getDownloadURL(storageRef)
     return true
   } catch {
