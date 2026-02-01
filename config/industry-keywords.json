@@ -1,0 +1,267 @@
+{
+  "tech": {
+    "frontend": [
+      "React", "Vue.js", "Angular", "TypeScript", "JavaScript",
+      "HTML5", "CSS3", "Tailwind CSS", "Next.js", "Webpack",
+      "Responsive Design", "UI/UX", "Accessibility", "Performance Optimization",
+      "Redux", "Zustand", "GraphQL", "REST API", "Jest", "Cypress",
+      "Storybook", "Figma", "Web Components", "PWA", "SEO"
+    ],
+    "backend": [
+      "Node.js", "Python", "Java", "Go", "Rust", "C#",
+      "Express", "FastAPI", "Django", "Spring Boot", "NestJS",
+      "PostgreSQL", "MongoDB", "MySQL", "Redis", "Elasticsearch",
+      "REST API", "GraphQL", "Microservices", "Docker", "Kubernetes",
+      "AWS", "GCP", "Azure", "Serverless", "CI/CD"
+    ],
+    "devops": [
+      "CI/CD", "Jenkins", "GitHub Actions", "GitLab CI", "CircleCI",
+      "AWS", "GCP", "Azure", "Docker", "Kubernetes", "Helm",
+      "Terraform", "Ansible", "Pulumi", "CloudFormation",
+      "Prometheus", "Grafana", "Datadog", "New Relic",
+      "Linux", "Bash", "Python", "Infrastructure as Code"
+    ],
+    "data": [
+      "Python", "SQL", "R", "Scala",
+      "Pandas", "NumPy", "Scikit-learn", "TensorFlow", "PyTorch",
+      "Spark", "Hadoop", "Airflow", "dbt",
+      "Data Visualization", "Tableau", "Power BI", "Looker",
+      "ETL", "Data Warehouse", "BigQuery", "Snowflake", "Databricks",
+      "Machine Learning", "Deep Learning", "NLP", "Computer Vision"
+    ],
+    "security": [
+      "Cybersecurity", "Penetration Testing", "OWASP", "SOC2",
+      "SIEM", "Splunk", "Security Auditing", "Vulnerability Assessment",
+      "Encryption", "IAM", "Zero Trust", "Compliance",
+      "ISO 27001", "GDPR", "HIPAA", "PCI DSS"
+    ],
+    "mobile": [
+      "iOS", "Android", "React Native", "Flutter", "Swift",
+      "Kotlin", "Objective-C", "Java", "Xamarin",
+      "Mobile UI/UX", "App Store Optimization", "Push Notifications",
+      "Firebase", "Core Data", "Room", "SQLite"
+    ],
+    "softSkills": [
+      "Agile", "Scrum", "Kanban", "Team Collaboration",
+      "Problem Solving", "Communication", "Code Review",
+      "Mentoring", "Technical Writing", "Documentation",
+      "Project Management", "Leadership", "Cross-functional"
+    ]
+  },
+
+  "finance": {
+    "accounting": [
+      "GAAP", "IFRS", "Financial Reporting", "Audit", "Tax Compliance",
+      "SAP", "Oracle Financials", "QuickBooks", "Xero", "NetSuite",
+      "Accounts Payable", "Accounts Receivable", "General Ledger",
+      "Month-End Close", "Reconciliation", "Budget Management",
+      "Excel", "VBA", "Pivot Tables", "Financial Modeling"
+    ],
+    "analysis": [
+      "Financial Modeling", "Valuation", "DCF", "LBO", "M&A",
+      "Bloomberg Terminal", "Capital IQ", "FactSet", "Refinitiv",
+      "Excel VBA", "Python", "R", "SQL",
+      "Due Diligence", "Risk Assessment", "Forecasting",
+      "Credit Analysis", "Investment Analysis"
+    ],
+    "trading": [
+      "Equity", "Fixed Income", "Derivatives", "Options", "Futures",
+      "Forex", "Commodities", "Algorithmic Trading", "Quantitative Analysis",
+      "Risk Management", "Portfolio Management", "Market Analysis",
+      "Bloomberg", "Reuters", "Trading Systems"
+    ],
+    "banking": [
+      "Relationship Management", "Credit Analysis", "Loan Origination",
+      "KYC", "AML", "Compliance", "Basel III",
+      "Commercial Banking", "Investment Banking", "Private Banking",
+      "Wealth Management", "Asset Management"
+    ],
+    "softSkills": [
+      "Attention to Detail", "Analytical Thinking", "Communication",
+      "Regulatory Compliance", "Stakeholder Management",
+      "Client Relations", "Presentation Skills", "Deadline Management"
+    ]
+  },
+
+  "marketing": {
+    "digital": [
+      "SEO", "SEM", "PPC", "Google Ads", "Facebook Ads", "LinkedIn Ads",
+      "Google Analytics", "GA4", "Google Tag Manager",
+      "Content Marketing", "Email Marketing", "Marketing Automation",
+      "HubSpot", "Salesforce", "Marketo", "Mailchimp",
+      "A/B Testing", "Conversion Optimization", "Landing Pages"
+    ],
+    "social": [
+      "Social Media Strategy", "Community Management", "Influencer Marketing",
+      "Instagram", "LinkedIn", "TikTok", "Twitter/X", "Facebook",
+      "Content Creation", "Engagement", "Social Listening",
+      "Hootsuite", "Sprout Social", "Buffer", "Later"
+    ],
+    "content": [
+      "Content Strategy", "Copywriting", "Blogging", "Video Production",
+      "Podcasting", "Webinars", "White Papers", "Case Studies",
+      "WordPress", "Medium", "Substack",
+      "SEO Writing", "Technical Writing", "Brand Voice"
+    ],
+    "creative": [
+      "Brand Strategy", "Creative Direction", "Art Direction",
+      "Adobe Creative Suite", "Photoshop", "Illustrator", "InDesign",
+      "Figma", "Canva", "Video Editing", "Premiere Pro", "After Effects",
+      "Storytelling", "Visual Design"
+    ],
+    "analytics": [
+      "Data Analysis", "Google Analytics", "Mixpanel", "Amplitude",
+      "Marketing Attribution", "ROI Measurement", "Dashboards",
+      "Excel", "Tableau", "SQL", "Python"
+    ],
+    "softSkills": [
+      "Creativity", "Strategic Thinking", "Communication",
+      "Project Management", "Data-Driven", "Collaboration",
+      "Adaptability", "Trend Analysis"
+    ]
+  },
+
+  "healthcare": {
+    "clinical": [
+      "Patient Care", "Clinical Assessment", "Treatment Planning",
+      "Medical Records", "EMR", "EHR", "Epic", "Cerner", "Meditech",
+      "HIPAA Compliance", "Patient Safety", "Care Coordination",
+      "Clinical Documentation", "Care Plans"
+    ],
+    "nursing": [
+      "Registered Nurse", "Licensed Practical Nurse", "Nurse Practitioner",
+      "Critical Care", "Emergency Care", "Pediatric", "Geriatric",
+      "Medication Administration", "Patient Assessment",
+      "Care Coordination", "Patient Education"
+    ],
+    "administrative": [
+      "Healthcare Administration", "Medical Billing", "Medical Coding",
+      "ICD-10", "CPT", "HCPCS", "Claims Processing",
+      "Revenue Cycle Management", "Insurance Verification",
+      "Patient Scheduling", "Front Office Management"
+    ],
+    "pharmaceutical": [
+      "Drug Development", "Clinical Trials", "FDA Regulations",
+      "Pharmacology", "Drug Safety", "Pharmacovigilance",
+      "GMP", "Quality Control", "Regulatory Affairs"
+    ],
+    "research": [
+      "Clinical Research", "Research Protocols", "IRB",
+      "Data Collection", "Statistical Analysis", "SPSS", "SAS",
+      "Literature Review", "Publications", "Grant Writing"
+    ],
+    "softSkills": [
+      "Empathy", "Communication", "Attention to Detail",
+      "Stress Management", "Team Collaboration", "Patient Advocacy",
+      "Critical Thinking", "Time Management"
+    ]
+  },
+
+  "sales": {
+    "b2b": [
+      "B2B Sales", "Enterprise Sales", "Solution Selling",
+      "Account Management", "Pipeline Management", "Forecasting",
+      "Salesforce", "HubSpot", "Pipedrive", "CRM",
+      "Contract Negotiation", "RFP Response", "Presentations"
+    ],
+    "b2c": [
+      "B2C Sales", "Retail Sales", "Customer Service",
+      "Product Knowledge", "Upselling", "Cross-selling",
+      "Point of Sale", "Customer Relationship", "Lead Generation"
+    ],
+    "leadership": [
+      "Sales Management", "Team Leadership", "Quota Management",
+      "Sales Training", "Performance Coaching", "Territory Management",
+      "Revenue Growth", "Sales Strategy"
+    ],
+    "softSkills": [
+      "Negotiation", "Persuasion", "Relationship Building",
+      "Active Listening", "Resilience", "Goal-Oriented",
+      "Presentation Skills", "Problem Solving"
+    ]
+  },
+
+  "hr": {
+    "recruitment": [
+      "Talent Acquisition", "Full-Cycle Recruiting", "Sourcing",
+      "LinkedIn Recruiter", "ATS", "Greenhouse", "Lever", "Workday",
+      "Interviewing", "Candidate Assessment", "Offer Negotiation",
+      "Employer Branding", "Campus Recruiting", "Diversity Recruiting"
+    ],
+    "operations": [
+      "HR Operations", "HRIS", "Workday", "SAP SuccessFactors",
+      "Payroll", "Benefits Administration", "Compliance",
+      "Employee Relations", "Policy Development", "Onboarding"
+    ],
+    "development": [
+      "Learning & Development", "Training Programs", "Career Development",
+      "Performance Management", "Succession Planning",
+      "Leadership Development", "Coaching", "Mentoring"
+    ],
+    "analytics": [
+      "People Analytics", "HR Metrics", "Workforce Planning",
+      "Attrition Analysis", "Engagement Surveys",
+      "Data Visualization", "Reporting"
+    ],
+    "softSkills": [
+      "Communication", "Empathy", "Conflict Resolution",
+      "Confidentiality", "Organizational Skills", "Judgment",
+      "Negotiation", "Change Management"
+    ]
+  },
+
+  "legal": {
+    "corporate": [
+      "Corporate Law", "M&A", "Due Diligence", "Contract Drafting",
+      "Securities Law", "Corporate Governance", "Compliance",
+      "Commercial Transactions", "Joint Ventures"
+    ],
+    "litigation": [
+      "Litigation", "Civil Litigation", "Criminal Defense",
+      "Legal Research", "Legal Writing", "Court Filings",
+      "Discovery", "Depositions", "Trial Preparation"
+    ],
+    "intellectual_property": [
+      "Intellectual Property", "Patent Law", "Trademark Law",
+      "Copyright Law", "IP Litigation", "Licensing",
+      "Patent Prosecution", "IP Strategy"
+    ],
+    "compliance": [
+      "Regulatory Compliance", "GDPR", "CCPA", "HIPAA",
+      "Risk Management", "Policy Development", "Auditing",
+      "Ethics", "Corporate Compliance"
+    ],
+    "softSkills": [
+      "Analytical Thinking", "Attention to Detail", "Communication",
+      "Negotiation", "Research", "Writing", "Problem Solving",
+      "Client Relations"
+    ]
+  },
+
+  "engineering": {
+    "mechanical": [
+      "Mechanical Engineering", "CAD", "SolidWorks", "AutoCAD", "CATIA",
+      "FEA", "CFD", "3D Modeling", "Product Design",
+      "Manufacturing", "GD&T", "Prototyping", "Testing"
+    ],
+    "electrical": [
+      "Electrical Engineering", "Circuit Design", "PCB Design",
+      "Altium", "Eagle", "MATLAB", "Simulink",
+      "Embedded Systems", "PLC", "SCADA", "Power Systems"
+    ],
+    "civil": [
+      "Civil Engineering", "Structural Analysis", "AutoCAD Civil 3D",
+      "Revit", "Project Management", "Construction Management",
+      "Site Planning", "Infrastructure", "Transportation"
+    ],
+    "chemical": [
+      "Chemical Engineering", "Process Design", "ASPEN",
+      "Process Optimization", "Safety", "Quality Control",
+      "Scale-up", "R&D", "Manufacturing"
+    ],
+    "softSkills": [
+      "Problem Solving", "Analytical Thinking", "Project Management",
+      "Technical Writing", "Team Collaboration", "Attention to Detail"
+    ]
+  }
+}

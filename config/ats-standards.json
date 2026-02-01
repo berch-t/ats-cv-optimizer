@@ -1,0 +1,317 @@
+{
+  "atsStandards": {
+    "taleo": {
+      "name": "Oracle Taleo",
+      "marketShare": 40,
+      "strictness": "high",
+      "description": "Most widely used ATS, very strict parsing requirements",
+      "preferences": {
+        "dateFormat": "MM/YYYY",
+        "sectionHeaders": [
+          "Professional Experience",
+          "Work Experience",
+          "Education",
+          "Skills",
+          "Certifications",
+          "Summary",
+          "Professional Summary"
+        ],
+        "avoidElements": [
+          "tables",
+          "multiple columns",
+          "text boxes",
+          "headers",
+          "footers",
+          "images",
+          "charts",
+          "graphics",
+          "icons"
+        ],
+        "maxFileSize": 5242880,
+        "supportedFonts": ["Arial", "Calibri", "Times New Roman", "Helvetica", "Georgia"],
+        "maxPages": 2,
+        "bulletPoints": ["•", "-", "*"]
+      },
+      "commonIn": ["Fortune 500", "Large enterprises", "Government", "Healthcare"]
+    },
+
+    "workday": {
+      "name": "Workday",
+      "marketShare": 25,
+      "strictness": "medium",
+      "description": "Cloud-based HCM with moderate parsing flexibility",
+      "preferences": {
+        "dateFormat": "MM/YYYY",
+        "sectionHeaders": [
+          "Experience",
+          "Education",
+          "Skills",
+          "Summary",
+          "Certifications",
+          "Languages"
+        ],
+        "avoidElements": [
+          "complex tables",
+          "graphics",
+          "unusual fonts",
+          "headers",
+          "footers"
+        ],
+        "maxFileSize": 10485760,
+        "supportedFonts": ["Arial", "Calibri", "Georgia", "Verdana", "Tahoma"],
+        "maxPages": 3,
+        "bulletPoints": ["•", "-", "*", "o"]
+      },
+      "commonIn": ["Tech companies", "Finance", "Retail", "Large enterprises"]
+    },
+
+    "greenhouse": {
+      "name": "Greenhouse",
+      "marketShare": 15,
+      "strictness": "medium",
+      "description": "Popular in tech industry, good parsing capabilities",
+      "preferences": {
+        "dateFormat": "MM/YYYY or YYYY",
+        "sectionHeaders": [
+          "Experience",
+          "Education",
+          "Projects",
+          "Skills",
+          "Achievements",
+          "Summary"
+        ],
+        "avoidElements": [
+          "tables",
+          "images",
+          "excessive formatting"
+        ],
+        "maxFileSize": 10485760,
+        "supportedFonts": ["Arial", "Calibri", "Helvetica", "Open Sans", "Roboto"],
+        "maxPages": 3,
+        "bulletPoints": ["•", "-", "→", "▪"]
+      },
+      "commonIn": ["Startups", "Tech companies", "Scale-ups", "SaaS"]
+    },
+
+    "lever": {
+      "name": "Lever",
+      "marketShare": 10,
+      "strictness": "low",
+      "description": "Modern ATS with flexible parsing and good UX",
+      "preferences": {
+        "dateFormat": "flexible",
+        "sectionHeaders": [
+          "Experience",
+          "Education",
+          "Skills",
+          "Projects",
+          "About"
+        ],
+        "avoidElements": [
+          "excessive graphics",
+          "complex layouts"
+        ],
+        "maxFileSize": 10485760,
+        "supportedFonts": ["any standard fonts"],
+        "maxPages": 4,
+        "bulletPoints": ["•", "-", "*", "→"]
+      },
+      "commonIn": ["Startups", "Modern tech companies", "SaaS", "VC-backed"]
+    },
+
+    "smartrecruiters": {
+      "name": "SmartRecruiters",
+      "marketShare": 8,
+      "strictness": "low",
+      "description": "Enterprise recruiting platform with AI parsing",
+      "preferences": {
+        "dateFormat": "MM/YYYY",
+        "sectionHeaders": [
+          "Professional Experience",
+          "Education",
+          "Skills",
+          "Languages",
+          "Certifications"
+        ],
+        "avoidElements": [
+          "complex layouts",
+          "embedded objects"
+        ],
+        "maxFileSize": 10485760,
+        "supportedFonts": ["Arial", "Calibri", "Helvetica", "Times New Roman"],
+        "maxPages": 3,
+        "bulletPoints": ["•", "-", "*"]
+      },
+      "commonIn": ["E-commerce", "Services", "Mid-size enterprises", "Retail"]
+    },
+
+    "icims": {
+      "name": "iCIMS",
+      "marketShare": 7,
+      "strictness": "medium",
+      "description": "Enterprise talent acquisition suite",
+      "preferences": {
+        "dateFormat": "MM/YYYY",
+        "sectionHeaders": [
+          "Work History",
+          "Education",
+          "Skills",
+          "Summary",
+          "Certifications"
+        ],
+        "avoidElements": [
+          "tables",
+          "multiple columns",
+          "graphics"
+        ],
+        "maxFileSize": 5242880,
+        "supportedFonts": ["Arial", "Calibri", "Times New Roman", "Verdana"],
+        "maxPages": 2,
+        "bulletPoints": ["•", "-"]
+      },
+      "commonIn": ["Large enterprises", "Healthcare", "Financial services"]
+    },
+
+    "breezy": {
+      "name": "Breezy HR",
+      "marketShare": 3,
+      "strictness": "low",
+      "description": "SMB-focused ATS with user-friendly interface",
+      "preferences": {
+        "dateFormat": "flexible",
+        "sectionHeaders": [
+          "Experience",
+          "Education",
+          "Skills"
+        ],
+        "avoidElements": [
+          "embedded files"
+        ],
+        "maxFileSize": 15728640,
+        "supportedFonts": ["any"],
+        "maxPages": 5,
+        "bulletPoints": ["any"]
+      },
+      "commonIn": ["SMBs", "Startups", "Agencies"]
+    },
+
+    "jobvite": {
+      "name": "Jobvite",
+      "marketShare": 5,
+      "strictness": "medium",
+      "description": "End-to-end talent acquisition platform",
+      "preferences": {
+        "dateFormat": "MM/YYYY",
+        "sectionHeaders": [
+          "Professional Experience",
+          "Education",
+          "Skills",
+          "Certifications"
+        ],
+        "avoidElements": [
+          "tables",
+          "images",
+          "complex formatting"
+        ],
+        "maxFileSize": 10485760,
+        "supportedFonts": ["Arial", "Calibri", "Helvetica", "Georgia"],
+        "maxPages": 3,
+        "bulletPoints": ["•", "-", "*"]
+      },
+      "commonIn": ["Tech", "Healthcare", "Professional services"]
+    }
+  },
+
+  "jobBoardMapping": {
+    "linkedin": ["taleo", "workday", "greenhouse", "lever", "icims", "smartrecruiters"],
+    "indeed": ["taleo", "workday", "smartrecruiters", "icims"],
+    "hellowork": ["taleo", "workday", "smartrecruiters"],
+    "cadremploi": ["taleo", "workday"],
+    "welcometothejungle": ["greenhouse", "lever", "workday", "smartrecruiters"],
+    "apec": ["taleo", "workday"],
+    "monster": ["taleo", "icims"],
+    "glassdoor": ["greenhouse", "lever", "workday"],
+    "ziprecruiter": ["taleo", "workday", "icims"]
+  },
+
+  "generalBestPractices": {
+    "formatting": {
+      "fontSizes": {
+        "name": 14,
+        "sectionHeaders": 12,
+        "body": 11,
+        "minimum": 10,
+        "maximum": 14
+      },
+      "margins": {
+        "top": "0.5in",
+        "bottom": "0.5in",
+        "left": "0.5in",
+        "right": "0.5in",
+        "minimum": "0.25in",
+        "maximum": "1in"
+      },
+      "lineSpacing": 1.15,
+      "sectionSpacing": "0.5em"
+    },
+    "content": {
+      "maxLength": 2,
+      "sectionOrder": [
+        "Contact Information",
+        "Professional Summary",
+        "Professional Experience",
+        "Education",
+        "Skills",
+        "Certifications",
+        "Languages",
+        "Projects"
+      ],
+      "bulletPointsPerJob": {
+        "minimum": 3,
+        "maximum": 6
+      },
+      "experienceFormat": "reverse-chronological"
+    },
+    "keywords": {
+      "minDensity": 2,
+      "maxDensity": 5,
+      "naturalPlacement": true
+    },
+    "fileFormat": {
+      "preferredFormat": "pdf",
+      "acceptedFormats": ["pdf", "docx", "doc"],
+      "maxFileSize": 5242880,
+      "encoding": "UTF-8"
+    }
+  },
+
+  "scoringWeights": {
+    "formatting": 0.40,
+    "keywords": 0.30,
+    "structure": 0.20,
+    "readability": 0.10
+  },
+
+  "penalties": {
+    "hasTables": -30,
+    "hasMultipleColumns": -25,
+    "hasImages": -20,
+    "hasHeadersFooters": -15,
+    "hasTextBoxes": -20,
+    "unsupportedFont": -5,
+    "nonStandardSection": -10,
+    "ambiguousDate": -10,
+    "missingContactInfo": -15,
+    "tooLong": -10,
+    "tooShort": -5
+  },
+
+  "bonuses": {
+    "standardDateFormat": 5,
+    "allStandardSections": 10,
+    "goodKeywordDensity": 10,
+    "quantifiedAchievements": 5,
+    "relevantSkills": 5,
+    "clearContactInfo": 5
+  }
+}

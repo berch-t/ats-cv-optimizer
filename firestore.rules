@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // Helper Functions
+    // ============================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isValidEmail(email) {
+      return email.matches('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
+    }
+
+    // ============================================
+    // Conversions Collection
+    // ============================================
+
+    match /conversions/{conversionId} {
+      // Users can only read their own conversions
+      allow read: if isAuthenticated() && isOwner(resource.data.userId);
+
+      // Users can create conversions with their own userId
+      allow create: if isAuthenticated()
+                    && isOwner(request.resource.data.userId)
+                    && request.resource.data.keys().hasAll(['userId', 'createdAt']);
+
+      // No updates or deletes allowed (immutable records)
+      allow update, delete: if false;
+    }
+
+    // ============================================
+    // Subscriptions Collection
+    // ============================================
+
+    match /subscriptions/{userId} {
+      // Users can read their own subscription
+      allow read: if isAuthenticated() && isOwner(userId);
+
+      // Users can create their own subscription (initial free tier)
+      allow create: if isAuthenticated()
+                    && isOwner(userId)
+                    && request.resource.data.plan == 'free';
+
+      // Updates are only allowed via server-side (webhook handlers)
+      // Clients cannot upgrade themselves directly
+      allow update: if false;
+
+      // Subscriptions cannot be deleted by users
+      allow delete: if false;
+    }
+
+    // ============================================
+    // Users Collection
+    // ============================================
+
+    match /users/{userId} {
+      // Users can read their own profile
+      allow read: if isAuthenticated() && isOwner(userId);
+
+      // Users can create their own profile
+      allow create: if isAuthenticated()
+                    && isOwner(userId)
+                    && request.resource.data.keys().hasAll(['email', 'createdAt']);
+
+      // Users can update their own profile (limited fields)
+      allow update: if isAuthenticated()
+                    && isOwner(userId)
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                      .hasOnly(['displayName', 'photoURL', 'settings', 'updatedAt']);
+
+      // Users cannot delete their profile (only via account deletion API)
+      allow delete: if false;
+    }
+
+    // ============================================
+    // Admin Collection (server-side only)
+    // ============================================
+
+    match /admin/{document=**} {
+      allow read, write: if false;
+    }
+
+    // ============================================
+    // Stats Collection (read-only aggregates)
+    // ============================================
+
+    match /stats/{document=**} {
+      allow read: if true; // Public stats
+      allow write: if false; // Server-side only
+    }
+  }
+}
