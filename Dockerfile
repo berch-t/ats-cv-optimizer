@@ -26,10 +26,11 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# Build the application with secrets
-RUN --mount=type=secret,id=env,target=/app/.env.build \
-    set -a && . /app/.env.build && set +a && \
-    npm run build
+# Copy env file for build (contains NEXT_PUBLIC_* values)
+COPY .env.production .env.production
+
+# Build the application (NEXT_PUBLIC_* read from .env.production)
+RUN npm run build
 
 # Stage 3: Runner
 FROM node:20-alpine AS runner

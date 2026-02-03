@@ -83,13 +83,9 @@ jobs:
         id: image
         run: echo "name=${{ env.REGISTRY }}/${{ env.GCP_PROJECT_ID }}/ats-cv-optimizer/app:${{ github.sha }}" >> $GITHUB_OUTPUT
 
-      - name: Build Docker image
-        id: build
-        env:
-          IMAGE: ${{ steps.image.outputs.name }}
-          DOCKER_BUILDKIT: 1
+      - name: Create .env.production for build
         run: |
-          cat > .env.build << 'EOF'
+          cat > .env.production << EOF
           NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
           NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
@@ -99,9 +95,13 @@ jobs:
           NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
           NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
           EOF
-          docker build -t "$IMAGE" --secret id=env,src=.env.build .
+
+      - name: Build Docker image
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}
+        run: |
+          docker build -t "$IMAGE" .
           docker push "$IMAGE"
-          rm .env.build
 
   # ============================================
   # Deploy Job - Deploys to Cloud Run
