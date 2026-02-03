@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useRef } from 'react'
 import type { CVAnalysisResult, ConversionMessage, StreamChunk } from '@/types/cv'
+import { saveConversion, incrementConversionUsage } from '@/lib/firebase/firestore'
+import { getAuth } from 'firebase/auth'
 
 interface ConversionState {
   status: 'idle' | 'uploading' | 'analyzing' | 'generating' | 'completed' | 'error'
@@ -65,6 +67,8 @@ export function useConversion() {
 
   const startConversion = useCallback(
     async (file: File, jobDescription?: string) => {
+      const startTime = Date.now()
+
       // Reset state
       setState({
         ...initialState,
@@ -189,6 +193,26 @@ export function useConversion() {
                       type: 'result',
                       content: 'CV optimization complete! Download your optimized CV below.',
                     })
+
+                    // Save conversion to Firestore
+                    try {
+                      const currentUser = getAuth().currentUser
+                      if (currentUser && analysisResult) {
+                        await saveConversion({
+                          userId: currentUser.uid,
+                          originalUrl: chunk.originalPdfUrl || '',
+                          optimizedUrl: chunk.optimizedPdfUrl || '',
+                          originalFileName: file.name,
+                          originalFileSize: file.size,
+                          analysisResult,
+                          createdAt: new Date(),
+                          processingTime: Date.now() - startTime,
+                        })
+                        await incrementConversionUsage(currentUser.uid)
+                      }
+                    } catch (saveError) {
+                      console.error('Failed to save conversion:', saveError)
+                    }
                     break
 
                   case 'error':

@@ -18,11 +18,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { useAuthContext } from '@/components/providers'
-import type { ConversionDocument } from '@/types/api'
+import { getUserConversions } from '@/lib/firebase/firestore'
+import type { ConversionHistoryItem } from '@/types/user'
 
 export default function DashboardPage() {
   const { user, isPremium, subscription } = useAuthContext()
-  const [recentConversions, setRecentConversions] = useState<ConversionDocument[]>([])
+  const [recentConversions, setRecentConversions] = useState<ConversionHistoryItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [stats, setStats] = useState({
     totalConversions: 0,
@@ -33,13 +34,27 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user) {
+        setIsLoading(false)
+        return
+      }
       try {
-        const response = await fetch('/api/conversions')
-        if (response.ok) {
-          const data = await response.json()
-          setRecentConversions(data.conversions || [])
-          setStats(data.stats || stats)
-        }
+        const conversions = await getUserConversions(user.uid, 50)
+        setRecentConversions(conversions)
+
+        const scores = conversions.map((c) => c.optimizedScore).filter((s) => s > 0)
+        const improvements = conversions.map((c) => c.scoreImprovement).filter((s) => s > 0)
+
+        setStats({
+          totalConversions: conversions.length,
+          averageScore: scores.length > 0
+            ? Math.round(scores.reduce((a, s) => a + s, 0) / scores.length)
+            : 0,
+          bestScore: scores.length > 0 ? Math.max(...scores) : 0,
+          scoreImprovement: improvements.length > 0
+            ? Math.round(improvements.reduce((a, s) => a + s, 0) / improvements.length)
+            : 0,
+        })
       } catch (error) {
         console.error('Error fetching conversions:', error)
       } finally {
@@ -48,7 +63,7 @@ export default function DashboardPage() {
     }
 
     fetchData()
-  }, [])
+  }, [user])
 
   const usagePercentage = subscription
     ? subscription.conversionsLimit === -1
@@ -298,7 +313,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <p className="font-medium text-zinc-900 dark:text-white">
-                        {conversion.fileName || 'CV Document'}
+                        {conversion.originalFileName || 'CV Document'}
                       </p>
                       <p className="text-sm text-zinc-500">
                         {new Date(conversion.createdAt).toLocaleDateString()}
@@ -308,7 +323,7 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <p className="font-semibold text-emerald-600">
-                        {conversion.score || 0}%
+                        {conversion.optimizedScore || 0}%
                       </p>
                       <p className="text-xs text-zinc-500">ATS Score</p>
                     </div>

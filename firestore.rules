@@ -48,9 +48,12 @@ service cloud.firestore {
                     && isOwner(userId)
                     && request.resource.data.plan == 'free';
 
-      // Updates are only allowed via server-side (webhook handlers)
-      // Clients cannot upgrade themselves directly
-      allow update: if false;
+      // Allow clients to increment their own conversionsUsed counter
+      allow update: if isAuthenticated()
+                    && isOwner(userId)
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                      .hasOnly(['conversionsUsed', 'updatedAt'])
+                    && request.resource.data.conversionsUsed == resource.data.conversionsUsed + 1;
 
       // Subscriptions cannot be deleted by users
       allow delete: if false;
