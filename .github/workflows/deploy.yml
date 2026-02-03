@@ -123,8 +123,9 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.GCP_PROJECT_ID }}/ats-cv-optimizer/app:${{ github.sha }}"
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image="${{ needs.build.outputs.image }}" \
+            --image="$IMAGE" \
             --region=${{ env.GCP_REGION }} \
             --platform=managed \
             --allow-unauthenticated \
