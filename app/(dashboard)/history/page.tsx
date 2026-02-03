@@ -6,14 +6,13 @@ import {
   FileText,
   Download,
   Eye,
-  Trash2,
   Search,
   Calendar,
   TrendingUp,
   Filter,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -31,25 +30,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import type { ConversionDocument } from '@/types/api'
+import { useAuthContext } from '@/components/providers'
+import { getUserConversions } from '@/lib/firebase/firestore'
+import type { ConversionHistoryItem } from '@/types/user'
 
 export default function HistoryPage() {
-  const [conversions, setConversions] = useState<ConversionDocument[]>([])
-  const [filteredConversions, setFilteredConversions] = useState<ConversionDocument[]>([])
+  const { user } = useAuthContext()
+  const [conversions, setConversions] = useState<ConversionHistoryItem[]>([])
+  const [filteredConversions, setFilteredConversions] = useState<ConversionHistoryItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('date-desc')
-  const [selectedConversion, setSelectedConversion] = useState<ConversionDocument | null>(null)
 
   useEffect(() => {
     const fetchConversions = async () => {
+      if (!user) {
+        setIsLoading(false)
+        return
+      }
       try {
-        const response = await fetch('/api/conversions')
-        if (response.ok) {
-          const data = await response.json()
-          setConversions(data.conversions || [])
-          setFilteredConversions(data.conversions || [])
-        }
+        const data = await getUserConversions(user.uid, 100)
+        setConversions(data)
+        setFilteredConversions(data)
       } catch (error) {
         console.error('Error fetching conversions:', error)
       } finally {
@@ -58,7 +60,7 @@ export default function HistoryPage() {
     }
 
     fetchConversions()
-  }, [])
+  }, [user])
 
   useEffect(() => {
     let filtered = [...conversions]
@@ -67,7 +69,7 @@ export default function HistoryPage() {
     if (searchQuery) {
       filtered = filtered.filter(
         (c) =>
-          c.fileName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          c.originalFileName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           c.targetSector?.toLowerCase().includes(searchQuery.toLowerCase())
       )
     }
@@ -81,28 +83,15 @@ export default function HistoryPage() {
         filtered.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
         break
       case 'score-desc':
-        filtered.sort((a, b) => (b.score || 0) - (a.score || 0))
+        filtered.sort((a, b) => (b.optimizedScore || 0) - (a.optimizedScore || 0))
         break
       case 'score-asc':
-        filtered.sort((a, b) => (a.score || 0) - (b.score || 0))
+        filtered.sort((a, b) => (a.optimizedScore || 0) - (b.optimizedScore || 0))
         break
     }
 
     setFilteredConversions(filtered)
   }, [conversions, searchQuery, sortBy])
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this conversion?')) return
-
-    try {
-      const response = await fetch(`/api/conversions/${id}`, { method: 'DELETE' })
-      if (response.ok) {
-        setConversions(conversions.filter((c) => c.id !== id))
-      }
-    } catch (error) {
-      console.error('Error deleting conversion:', error)
-    }
-  }
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30'
@@ -179,7 +168,7 @@ export default function HistoryPage() {
                       </div>
                       <div className="space-y-1">
                         <h3 className="font-medium text-zinc-900 dark:text-white">
-                          {conversion.fileName || 'CV Document'}
+                          {conversion.originalFileName || 'CV Document'}
                         </h3>
                         <div className="flex flex-wrap items-center gap-2 text-sm text-zinc-500">
                           <span className="flex items-center gap-1">
@@ -201,25 +190,31 @@ export default function HistoryPage() {
                       {/* Score */}
                       <div
                         className={`px-3 py-1.5 rounded-lg ${getScoreColor(
-                          conversion.score || 0
+                          conversion.optimizedScore || 0
                         )}`}
                       >
                         <div className="flex items-center gap-1">
                           <TrendingUp className="h-4 w-4" />
-                          <span className="font-semibold">{conversion.score || 0}%</span>
+                          <span className="font-semibold">{conversion.optimizedScore || 0}%</span>
                         </div>
                         <p className="text-xs opacity-80">ATS Score</p>
                       </div>
+
+                      {/* Score Improvement */}
+                      {conversion.scoreImprovement > 0 && (
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-emerald-600">
+                            +{conversion.scoreImprovement}%
+                          </p>
+                          <p className="text-xs text-zinc-500">improvement</p>
+                        </div>
+                      )}
 
                       {/* Actions */}
                       <div className="flex items-center gap-2">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setSelectedConversion(conversion)}
-                            >
+                            <Button variant="ghost" size="icon">
                               <Eye className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
@@ -227,68 +222,45 @@ export default function HistoryPage() {
                             <DialogHeader>
                               <DialogTitle>Conversion Details</DialogTitle>
                               <DialogDescription>
-                                {conversion.fileName} - {new Date(conversion.createdAt).toLocaleString()}
+                                {conversion.originalFileName} - {new Date(conversion.createdAt).toLocaleString()}
                               </DialogDescription>
                             </DialogHeader>
                             <div className="space-y-4 pt-4">
-                              {/* Score Breakdown */}
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                              {/* Score Summary */}
+                              <div className="grid grid-cols-3 gap-4">
                                 <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800">
-                                  <p className="text-sm text-zinc-500">Overall</p>
+                                  <p className="text-sm text-zinc-500">Original Score</p>
+                                  <p className="text-2xl font-bold text-zinc-600">
+                                    {conversion.originalScore || 0}%
+                                  </p>
+                                </div>
+                                <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800">
+                                  <p className="text-sm text-zinc-500">Optimized Score</p>
                                   <p className="text-2xl font-bold text-sky-600">
-                                    {conversion.score || 0}%
+                                    {conversion.optimizedScore || 0}%
                                   </p>
                                 </div>
                                 <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800">
-                                  <p className="text-sm text-zinc-500">Formatting</p>
-                                  <p className="text-2xl font-bold">
-                                    {conversion.breakdown?.formatting || 0}%
-                                  </p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800">
-                                  <p className="text-sm text-zinc-500">Keywords</p>
-                                  <p className="text-2xl font-bold">
-                                    {conversion.breakdown?.keywords || 0}%
-                                  </p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800">
-                                  <p className="text-sm text-zinc-500">Structure</p>
-                                  <p className="text-2xl font-bold">
-                                    {conversion.breakdown?.structure || 0}%
+                                  <p className="text-sm text-zinc-500">Improvement</p>
+                                  <p className="text-2xl font-bold text-emerald-600">
+                                    +{conversion.scoreImprovement || 0}%
                                   </p>
                                 </div>
                               </div>
 
-                              {/* Recommendations */}
-                              {conversion.recommendations && conversion.recommendations.length > 0 && (
-                                <div>
-                                  <h4 className="font-medium mb-2">Recommendations</h4>
-                                  <ul className="space-y-2">
-                                    {conversion.recommendations.map((rec, i) => (
-                                      <li
-                                        key={i}
-                                        className="text-sm text-zinc-600 dark:text-zinc-400 p-2 bg-zinc-50 dark:bg-zinc-800 rounded"
-                                      >
-                                        {rec}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-
                               {/* Download buttons */}
                               <div className="flex gap-2 pt-4">
-                                {conversion.originalPdfUrl && (
+                                {conversion.originalUrl && (
                                   <Button variant="outline" asChild>
-                                    <a href={conversion.originalPdfUrl} download>
+                                    <a href={conversion.originalUrl} download>
                                       <Download className="h-4 w-4 mr-2" />
                                       Original
                                     </a>
                                   </Button>
                                 )}
-                                {conversion.optimizedPdfUrl && (
+                                {conversion.optimizedUrl && (
                                   <Button asChild>
-                                    <a href={conversion.optimizedPdfUrl} download>
+                                    <a href={conversion.optimizedUrl} download>
                                       <Download className="h-4 w-4 mr-2" />
                                       Optimized
                                     </a>
@@ -299,22 +271,13 @@ export default function HistoryPage() {
                           </DialogContent>
                         </Dialog>
 
-                        {conversion.optimizedPdfUrl && (
+                        {conversion.optimizedUrl && (
                           <Button variant="ghost" size="icon" asChild>
-                            <a href={conversion.optimizedPdfUrl} download>
+                            <a href={conversion.optimizedUrl} download>
                               <Download className="h-4 w-4" />
                             </a>
                           </Button>
                         )}
-
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                          onClick={() => handleDelete(conversion.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
                       </div>
                     </div>
                   </div>

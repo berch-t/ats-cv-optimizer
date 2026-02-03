@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe/client'
 import { adminAuth, adminDb } from '@/lib/firebase/admin'
-import { cookies } from 'next/headers'
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     // Check Firebase Admin is initialized
     if (!adminAuth || !adminDb) {
@@ -13,19 +12,19 @@ export async function POST(_request: NextRequest) {
       )
     }
 
-    // Get session token
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('session')?.value
-
-    if (!sessionCookie) {
+    // Get Firebase ID token from Authorization header
+    const authHeader = request.headers.get('Authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized - missing token' },
         { status: 401 }
       )
     }
 
-    // Verify session
-    const decodedToken = await adminAuth.verifySessionCookie(sessionCookie, true)
+    const idToken = authHeader.split('Bearer ')[1]
+
+    // Verify ID token
+    const decodedToken = await adminAuth.verifyIdToken(idToken)
     const userId = decodedToken.uid
 
     // Get user's Stripe customer ID

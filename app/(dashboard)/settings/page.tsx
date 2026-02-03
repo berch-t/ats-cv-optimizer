@@ -37,6 +37,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { useAuthContext } from '@/components/providers'
+import { getAuth } from 'firebase/auth'
 
 export default function SettingsPage() {
   const { user, isPremium, subscription, signOut } = useAuthContext()
@@ -77,7 +78,13 @@ export default function SettingsPage() {
 
   const handleManageSubscription = async () => {
     try {
-      const response = await fetch('/api/billing/portal', { method: 'POST' })
+      const currentUser = getAuth().currentUser
+      if (!currentUser) return
+      const idToken = await currentUser.getIdToken()
+      const response = await fetch('/api/billing/portal', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${idToken}` },
+      })
       const data = await response.json()
       if (data.url) {
         window.location.href = data.url

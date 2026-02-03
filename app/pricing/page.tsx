@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { useAuthContext } from '@/components/providers'
 import { PRICING_PLANS } from '@/lib/stripe/plans'
 import { cn } from '@/lib/utils/cn'
+import { getAuth } from 'firebase/auth'
 
 export default function PricingPage() {
   const { isAuthenticated, isPremium } = useAuthContext()
@@ -23,14 +24,25 @@ export default function PricingPage() {
 
     setIsLoading(planId)
     try {
+      const currentUser = getAuth().currentUser
+      if (!currentUser) {
+        window.location.href = '/login?redirect=/pricing'
+        return
+      }
+      const idToken = await currentUser.getIdToken()
       const response = await fetch('/api/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+        },
         body: JSON.stringify({ plan: planId }),
       })
       const data = await response.json()
       if (data.url) {
         window.location.href = data.url
+      } else if (data.error) {
+        console.error('Checkout error:', data.error)
       }
     } catch (error) {
       console.error('Checkout error:', error)
